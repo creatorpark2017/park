@@ -151,5 +151,38 @@ class dqagent():
         loss.backward()
         self.nn.optimizer.step()
         
+   
+
+
+
+
+
+#env = gym.make()       
+maxmemory = 1000000
+batch_size = 32
+decay = 0.9999
+nn_update = 10000
+gamma = 0.99    
+episodes = 100000
+T=100000
+agent = dqagent(CNN, maxmemory, batch_size, Replay, env, decay, nn_update, gamma)
+scores = []
+for i in range(150):
+    done = False
+    state = env.reset()
+    score = 0
+    x = 0
+    while not done:
+        action = agent.action(state)
+        nextstate, reward, done, _ = env.step(action)
+        agent.replay.store(state, action, reward, nextstate, done)
+        x += 1
+        agent.update_value()
+        score += reward
+        state = nextstate
+        
         
             
+    scores.append(score)
+    if i%3 == 0:
+        print(i, np.mean(scores[-3:]))
